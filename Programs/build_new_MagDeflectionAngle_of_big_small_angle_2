@@ -1,0 +1,58 @@
+;pro build_new_MagDeflectionAngle_of_big_small_angle
+;
+sub_dir_date  = '20050929\'
+
+
+device, decomposed=1
+!P.background='FFFFFF'XL
+!P.color='000000'XL
+
+Step1:
+;===========================
+
+
+dir_restore = 'C:\Users\pzt\course\research\CDF_wind\'+sub_dir_date
+file_restore = 'sub_of_angle'+'.sav'
+file_array  = File_Search(dir_restore+file_restore, count=num_files)
+For i_file=0,num_files-1 Do Begin
+  Print, 'i_file, file: ', i_file, ': ', file_array(i_file)
+EndFor
+i_select  = 0
+Read, 'i_select: ', i_select
+file_restore  = file_array(i_select)
+Restore, file_restore, /Verbose
+;data_descrip= 'got from "get_WaveletTransform_from_BComp_vect_200802.pro"'
+;Save, FileName=dir_save+file_save, $
+;  data_descrip, $
+;  JulDay_2s_vect, scale_vect, $
+;  MagDeflectAng_arr, $
+;  subGT30, subLE10
+
+step2:
+n_LE10 = size(subLE10,/dimensions)
+
+JulDay_2s_vect = 2453642.5+lindgen(n_LE10)/86400.0
+MagDeflectAng_arr = MagDeflectAng_arr(subLE10,*)
+
+
+;;--
+dir_save  = 'C:\Users\pzt\course\research\CDF_wind\'+sub_dir_date
+JulDay_min  = Min(JulDay_2s_vect)
+JulDay_max  = Max(JulDay_2s_vect)
+CalDat, JulDay_min, mon_min,day_min,year_min,hour_min,min_min,sec_min
+CalDat, JulDay_max, mon_max,day_max,year_max,hour_max,min_max,sec_max
+TimeRange_str = '(time='+$
+    String(year_min,Format='(I4.4)')+String(mon_min,Format='(I2.2)')+String(day_min,Format='(I2.2)')+'-'+$
+    String(year_max,Format='(I4.4)')+String(mon_max,Format='(I2.2)')+String(day_max,Format='(I2.2)')+')'
+file_save = 'MagDeflectAng_time_scale_LE_arr'+$
+        TimeRange_str+'.sav'
+JulDay_min_v2 = Min(JulDay_2s_vect)
+data_descrip= 'got from "get_MagDeflectionAngle_time_scale_arr_WIND_19950131.pro"'
+Save, FileName=dir_save+file_save, $
+  data_descrip, $
+  JulDay_2s_vect, scale_vect, $
+  MagDeflectAng_arr
+
+
+end_program:
+end

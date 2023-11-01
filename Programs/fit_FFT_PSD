@@ -1,0 +1,90 @@
+;Pro fit_FFT_PSD
+
+
+
+
+step3:
+ 
+file_restore = 'Bx'+'_FFT_arr'+$
+        '(time=*-*)'+$
+        '.sav'
+file_array  = File_Search(dir_restore+file_restore, count=num_files)
+For i_file=0,num_files-1 Do Begin
+  Print, 'i_file, file: ', i_file, ': ', file_array(i_file)
+EndFor
+i_select  = 0
+Read, 'i_select: ', i_select
+file_restore  = file_array(i_select)
+Restore, file_restore, /Verbose
+;Save, FileName=dir_save+file_save, $
+;  data_descrip, $
+;  freq_vect_FFT, PSD_vect_FFT
+Bx_PSD_FFT_arr = PSD_vect_FFT
+  
+  
+file_restore = 'By'+'_FFT_arr'+$
+        '(time=*-*)'+$
+        '.sav'
+file_array  = File_Search(dir_restore+file_restore, count=num_files)
+For i_file=0,num_files-1 Do Begin
+  Print, 'i_file, file: ', i_file, ': ', file_array(i_file)
+EndFor
+i_select  = 0
+Read, 'i_select: ', i_select
+file_restore  = file_array(i_select)
+Restore, file_restore, /Verbose
+;Save, FileName=dir_save+file_save, $
+;  data_descrip, $
+; freq_vect_FFT, PSD_vect_FFT
+By_PSD_FFT_arr = PSD_vect_FFT
+
+
+
+file_restore = 'Bz'+'_FFT_arr'+$
+        '(time=*-*)'+$
+        '.sav'
+file_array  = File_Search(dir_restore+file_restore, count=num_files)
+For i_file=0,num_files-1 Do Begin
+  Print, 'i_file, file: ', i_file, ': ', file_array(i_file)
+EndFor
+i_select  = 0
+Read, 'i_select: ', i_select
+file_restore  = file_array(i_select)
+Restore, file_restore, /Verbose
+;Save, FileName=dir_save+file_save, $
+;  data_descrip, $
+;  freq_vect_FFT, PSD_vect_FFT
+Bz_PSD_FFT_arr = PSD_vect_FFT    
+
+
+PSD_total_vect_FFT = Bx_PSD_FFT_arr + By_PSD_FFT_arr + Bz_PSD_FFT_arr
+
+
+step4:    
+    
+    
+    
+Plot,Alog10(freq_vect_FFT), Alog10(PSD_total_vect_FFT)    
+    
+ sm_PSD_vect_FFT = smooth(PSD_total_vect_FFT,11)
+ window,2
+  
+ Plot,Alog10(freq_vect_FFT), Alog10(sm_PSD_vect_FFT) 
+  
+ n=0
+ m=0
+ ;m = size(freq_vect_FFT,/dimensions)
+ while  freq_vect_FFT(n) le 0.0031623 do begin
+  n=n+1
+ endwhile
+while  freq_vect_FFT(m) le 0.1 do begin
+  m=m+1
+endwhile
+
+  
+result1 = linfit(alog10(freq_vect_FFT(1:(n-1))),alog10(PSD_total_vect_FFT(1:(n-1))),prob = prob1 ,sigma = sigma1) 
+result1s = linfit(alog10(freq_vect_FFT(1:(n-1))),alog10(sm_PSD_vect_FFT(1:(n-1))),prob = prob1s ,sigma = sigma1s)
+result2 = linfit(alog10(freq_vect_FFT(n:(m-1))),alog10(PSD_total_vect_FFT(n:(m-1))),prob = prob2 ,sigma = sigma2)
+result2s = linfit(alog10(freq_vect_FFT(n:(m-1))),alog10(sm_PSD_vect_FFT(n:(m-1))),prob = prob2s ,sigma = sigma2s)
+
+print,result1,result1s,result2,result2s

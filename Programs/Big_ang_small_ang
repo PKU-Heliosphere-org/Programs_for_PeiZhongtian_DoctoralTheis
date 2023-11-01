@@ -1,0 +1,40 @@
+;Pro Big_ang_small_ang
+;
+sub_dir_date  = '19961104\'
+
+
+
+device, decomposed=1
+!P.background='FFFFFF'XL
+!P.color='000000'XL
+
+Step1:
+;===========================
+;Step1:
+
+dir_restore = GetEnv('WIND_Data_Dir')+sub_dir_date;+'MFI\'
+file_restore= 'MagDeflectAng_time_scale_arr(time=*).sav'
+file_array  = File_Search(dir_restore+file_restore, count=num_files)
+For i_file=0,num_files-1 Do Begin
+  Print, 'i_file, file: ', i_file, ': ', file_array(i_file)
+EndFor
+i_select  = 0
+Read, 'i_select: ', i_select
+file_restore  = file_array(i_select)
+Restore, file_restore, /Verbose
+;data_descrip= 'got from "get_MagDefectionAngle_time_scale_arr_WIND_19950131.pro"'
+;Save, FileName=dir_save+file_save, $
+; data_descrip, $
+; JulDay_2s_vect, scale_vect, $
+; MagDeflectAng_arr
+; 
+; 
+
+
+
+
+step2:
+
+
+End_Program:
+End
